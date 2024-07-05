@@ -10,7 +10,7 @@ export const inputValidationErrorsMiddleware = (req:Request, res:Response, next:
                 message: err.msg,
             }))
 
-        return res.status(400).json({errorsMessages: errorsResponse});
+         res.status(400).json({errorsMessages: errorsResponse});
     } else{
         next()
     }

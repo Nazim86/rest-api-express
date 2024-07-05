@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import jwt from "jsonwebtoken";
+import jwt, {JwtPayload} from "jsonwebtoken";
 import {injectable} from "inversify";
 import {UserRepository} from "../../user/db/user.repository";
 import {UserService} from "../../user/application/user-service";
@@ -45,7 +45,7 @@ export class AuthService {
             deviceId,
         );
 
-        const {iat, exp} = jwt.decode(refreshToken);
+        const {iat, exp} = jwt.decode(refreshToken) as JwtPayload
 
         //deviceDto
         const newDevice = {

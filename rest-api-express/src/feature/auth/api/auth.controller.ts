@@ -78,7 +78,7 @@ export class AuthController {
     async logout(req: Request, res: Response) {
         const accessToken = req.headers.authorization!.split(" ")[1]
 
-        const {deviceId, userId} = await this.authService.getTokenMetaData(accessToken)
+        const {deviceId, userId} = await this.authService.getTokenMetaData(accessToken) as {deviceId:string,userId:string}
 
         const result = await this.deviceService.deleteDevice(deviceId, userId)
 

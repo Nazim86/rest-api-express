@@ -48,7 +48,6 @@ export class AuthController {
 
     async refreshToken(req: Request, res: Response): Promise<void> {
 
-        const user = req.context.user!
         const token =req.cookies.refreshToken
 
         const {accessToken,refreshToken} = await this.authService.refreshToken(token)
@@ -82,10 +81,7 @@ export class AuthController {
     async logout(req: Request, res: Response) {
         const accessToken = req.headers.authorization!.split(" ")[1]
 
-        const {
-            deviceId,
-            userId
-        } = await this.authService.getTokenMetaData(accessToken)
+        const { deviceId, userId } = await this.authService.getTokenMetaData(accessToken)
 
        const result =  await this.deviceService.deleteDevice(deviceId, userId)
 

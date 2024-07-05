@@ -1,6 +1,6 @@
 import {
   DeleteObjectCommand,
-  DeleteObjectsCommand,
+  DeleteObjectsCommand, GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -30,12 +30,10 @@ export class S3StorageAdapter {
     });
   }
 
-  async saveAvatar(userId,filedata): Promise<{ url: string; fileId: string | undefined }> {
+  async uploadFile(userId, filedata): Promise<{ key: string; url: string; fileId: string | undefined }> {
     const fileType = filedata.mimetype.split('/')[0]
     const format = filedata.mimetype.split('/')[1]
     const key = `content/${userId}/${fileType}/${uuidv4()}.${format}`;
-
-
 
     const bucketParams = {
       Bucket: this.bucketName,
@@ -44,17 +42,42 @@ export class S3StorageAdapter {
       ContentType: filedata.contentType,
     };
 
-    const command:PutObjectCommand = new PutObjectCommand(bucketParams);
     try {
-      const uploadResult = await this.s3Client.send(command);
+      const command:PutObjectCommand = new PutObjectCommand(bucketParams);
 
+      const uploadResult = await this.s3Client.send(command);
       return {
+        key:key,
         url: this.getUrlFile(key),
         fileId: uploadResult.$metadata.requestId,
       };
     } catch (exception) {
       throw exception;
     }
+  }
+
+  async downloadFile(file){
+    const bucketParams = {
+      Bucket: this.bucketName,
+      Key: file.key,
+    };
+
+    try {
+      const command:GetObjectCommand = new GetObjectCommand(bucketParams);
+
+      const { Body, ContentType, ContentLength } = await this.s3Client.send(command);
+
+      return {Body, ContentType,ContentLength}
+      // return {
+      //
+      //   url: this.getUrlFile(key),
+      //   fileId: uploadResult.$metadata.requestId,
+      // };
+    } catch (exception) {
+      console.log("exception",exception)
+      throw exception;
+    }
+
   }
 
   async deleteAvatar(key: string) {

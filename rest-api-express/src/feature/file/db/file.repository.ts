@@ -27,9 +27,9 @@ export class FileRepository {
             .getMany()
     }
 
-    // async getFile(id: number) {
-    //     return await this.fileRepository.findOneBy({ id });
-    // }
+    async getFile(id: string) {
+        return await this.fileRepository.findOne({where:{id}})
+    }
     //
     // async deleteFile(id: number) {
     //     const file = await this.fileRepository.findOneBy({ id });

@@ -26,14 +26,15 @@ fileRoutes.get('/list',
 // fileRoutes.delete('/delete/:id',
 //     fileController.deleteFile.bind(fileController));
 //
-// fileRoutes.get('/:id',
-//     fileController.getFile.bind(fileController));
-//
-// fileRoutes.get('/download/:id',
-//     fileController.downloadFile.bind(fileController));
-//
-// fileRoutes.put('/update/:id',
-//     fileController.updateFile.bind(fileController));
+fileRoutes.get('/:id',
+    fileController.getFile.bind(fileController));
+
+fileRoutes.get('/download/:id',
+    fileController.downloadFile.bind(fileController));
+
+
+fileRoutes.put('/update/:id',checkAccessTokenMiddleware,upload.single('file'),
+    fileController.updateFile.bind(fileController));
 
 
 

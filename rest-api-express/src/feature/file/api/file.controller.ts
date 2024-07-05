@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { injectable } from "inversify";
 import {FileService} from "../application/file-service";
+import {Readable} from "node:stream";
 
 @injectable()
 export class FileController {
@@ -16,24 +17,39 @@ export class FileController {
             return res.status(400).send("No file uploaded.");
         }
         const file = await this.fileService.uploadFile(user.id,fileData);
-        res.status(201).send(file);
+        return res.status(201).send(file);
     }
 
     async listFiles(req: Request, res: Response) {
         const page = parseInt(req.query.page as string) || 1;
         const listSize = parseInt(req.query.listSize as string) || 10;
         const files = await this.fileService.listFiles(page, listSize);
-        res.send(files);
+        return res.send(files);
     }
 
-    // async getFile(req: Request, res: Response) {
-    //     const id = parseInt(req.params.id);
-    //     const file = await this.fileService.getFile(id);
-    //     if (!file) {
-    //         return res.status(404).send("File not found.");
-    //     }
-    //     res.send(file);
-    // }
+    async getFile(req: Request, res: Response) {
+        const id = req.params.id
+        const file = await this.fileService.getFile(id);
+        if (!file) {
+            return res.status(404).send("File not found.");
+        }
+        return res.send(file);
+    }
+
+    async updateFile(req: Request, res: Response) {
+        const id = req.params.id
+
+        const user =   req.context.user!
+        const fileData = req.file;
+
+        if (!fileData) {
+            return res.status(400).send("No file uploaded.");
+        }
+
+        const file = await this.fileService.updateFile(id,user.id, fileData);
+        return res.status(200).send(file);
+    }
+
     //
     // async deleteFile(req: Request, res: Response) {
     //     const id = parseInt(req.params.id);
@@ -41,34 +57,29 @@ export class FileController {
     //     res.status(204).send();
     // }
     //
-    // async updateFile(req: Request, res: Response) {
-    //     const id = parseInt(req.params.id);
-    //     const fileData = req.file;
-    //     if (!fileData) {
-    //         return res.status(400).send("No file uploaded.");
-    //     }
-    //     await this.fileService.updateFile(id, fileData);
-    //     res.status(200).send();
-    // }
     //
-    // async downloadFile(req: Request, res: Response) {
-    //     const id = parseInt(req.params.id);
-    //     const file = await this.fileService.getFile(id);
-    //     if (!file) {
-    //         return res.status(404).send("File not found.");
-    //     }
-    //     const s3Params = {
-    //         Bucket: 'your-bucket-name',
-    //         Key: file!.name,
-    //     };
-    //     s3.getObject(s3Params, (err, data) => {
-    //         if (err) {
-    //             return res.status(500).send(err);
-    //         }
-    //         res.attachment(file.name);
-    //         res.send(data.Body);
-    //     });
-    // }
+    async downloadFile(req: Request, res: Response) {
+        const id = req.params.id
+        const file = await this.fileService.getFile(id);
+
+        if (!file) {
+            return res.status(404).send("File not found.");
+        }
+
+        const { Body, ContentType, ContentLength } = await this.fileService.downloadFile(file)
+
+        if (Body instanceof Readable) {
+            res.setHeader('Content-Disposition', `attachment; filename="${file.name}"`);
+            res.setHeader('Content-Type', ContentType);
+            res.setHeader('Content-Length', ContentLength);
+
+            Body.pipe(res);
+        } else {
+            throw new Error('Неожиданный тип тела ответа');
+        }
+
+        return
+    }
 }
 
 

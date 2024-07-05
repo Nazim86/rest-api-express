@@ -3,19 +3,19 @@ import {Column, Entity, PrimaryColumn} from "typeorm";
 @Entity()
 export class Device {
     @PrimaryColumn({type:'uuid'})
-    id: string
+    id: string;
 
     @Column({ type: 'varchar' })
-    title: string
+    title: string;
 
     @Column({ type: 'varchar' })
-    userId: string
+    userId: string;
 
     @Column({ type: 'bigint' })
-    lastActiveDate: number
+    lastActiveDate: number;
 
     @Column({ type: 'bigint' })
-    expirationDate: number
+    expirationDate: number;
 
     static createDevice(newDevice:any): Device {
        const device = new Device()

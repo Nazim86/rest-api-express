@@ -3,26 +3,32 @@ import {User} from "../../user/entity/user.entity";
 
 @Entity()
 export class File {
-    @PrimaryColumn()
-    id: string
+    @PrimaryColumn({type:"varchar",unique:true})
+    id: string;
 
-    @Column()
-    name: string
+    @Column({type:"varchar"})
+    name: string;
 
-    @Column()
-    extension: string
+    @Column({type:"varchar"})
+    extension: string;
 
-    @Column()
-    mimeType: string
+    @Column({type:"varchar"})
+    mimeType: string;
 
-    @Column()
-    url: string
+    @Column({type:"varchar"})
+    url: string;
 
-    @Column()
-    size: number
+    @Column({type:"varchar"})
+    key: string;
 
-    @Column()
+    @Column({type:'int'})
+    size: number;
+
+    @Column({type:'date'})
     uploadDate: Date
+
+    @Column({type:'date',nullable:true})
+    updatedAt: Date
 
     @ManyToOne(() => User, user => user.files)
     user: User

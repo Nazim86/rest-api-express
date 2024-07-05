@@ -2,6 +2,7 @@ import {injectable} from "inversify";
 import {S3StorageAdapter} from "../s3-storage-adapter.service";
 import {File} from "../entity/file.entity";
 import {FileRepository} from "../db/file.repository";
+import {ResultCode} from "../../../error-handler/result-code-enum";
 
 @injectable()
 export class FileService {
@@ -13,12 +14,14 @@ export class FileService {
 
     async uploadFile(userId: string, fileData) {
 
+        const uploadedFile = await this.s3Service.uploadFile(userId, fileData)
 
-        const uploadedFile = await this.s3Service.saveAvatar(userId, fileData)
+
 
         const file = new File();
         file.id = uploadedFile.fileId!;
         file.url = uploadedFile.url;
+        file.key = uploadedFile.key;
         file.name = fileData.originalname;
         file.extension = fileData.mimetype.split('/')[1];
         file.mimeType = fileData.mimetype;
@@ -31,10 +34,14 @@ export class FileService {
       return this.fileRepository.listFiles(page, listSize)
     }
 
-    // async getFile(id: number) {
-    //     return await this.fileRepository.findOneBy({id});
-    // }
-    //
+    async getFile(id: string) {
+        return await this.fileRepository.getFile(id)
+    }
+
+    async downloadFile(file){
+        return await this.s3Service.downloadFile(file)
+    }
+
     // async deleteFile(id: number) {
     //     const file = await this.fileRepository.findOneBy({id});
     //     if (file) {
@@ -46,24 +53,24 @@ export class FileService {
     //     }
     // }
     //
-    // async updateFile(id: number, fileData) {
-    //     const file = await this.fileRepository.findOneBy({id});
-    //     if (file) {
-    //         const oldFileName = file.name;
-    //
-    //         file.name = fileData.originalname;
-    //         file.extension = fileData.mimetype.split('/')[1];
-    //         file.mimeType = fileData.mimetype;
-    //         file.size = fileData.size;
-    //         file.uploadDate = new Date();
-    //         await this.fileRepository.save(file);
-    //
-    //         await s3.upload({
-    //             Bucket: 'your-bucket-name',
-    //             Key: oldFileName,
-    //             Body: fileData.buffer,
-    //             ContentType: fileData.mimetype,
-    //         }).promise();
-    //     }
-    // }
+    async updateFile(id:string,userId: string, fileData) {
+
+        const uploadedFile = await this.s3Service.uploadFile(userId, fileData)
+
+        const file = await this.fileRepository.getFile(id)
+        if (!file){
+            return {code:ResultCode.NotFound, message:"File not found"}
+        }
+
+        file.url = uploadedFile.url;
+        file.name = fileData.originalname;
+        file.extension = fileData.mimetype.split('/')[1];
+        file.mimeType = fileData.mimetype;
+        file.size = fileData.size;
+        file.updatedAt = new Date();
+
+        return this.fileRepository.saveFileInfo(file);
+
+
+    }
 }

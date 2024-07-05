@@ -45,7 +45,6 @@ export class AuthService {
             deviceId,
         );
 
-        // decode token to take iat and exp
         const {iat, exp} = jwt.decode(refreshToken);
 
         //deviceDto

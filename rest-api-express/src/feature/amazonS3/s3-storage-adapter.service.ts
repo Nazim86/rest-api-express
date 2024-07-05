@@ -1,6 +1,6 @@
 import {
   DeleteObjectCommand,
-  DeleteObjectsCommand, GetObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -56,10 +56,10 @@ export class S3StorageAdapter {
     }
   }
 
-  async downloadFile(file){
+  async downloadFile(fileKey:string){
     const bucketParams = {
       Bucket: this.bucketName,
-      Key: file.key,
+      Key: fileKey,
     };
 
     try {
@@ -80,7 +80,7 @@ export class S3StorageAdapter {
 
   }
 
-  async deleteAvatar(key: string) {
+  async deleteFile(key: string) {
     const bucketParams = { Bucket: this.bucketName, Key: key };
     try {
       return await this.s3Client.send(new DeleteObjectCommand(bucketParams));
@@ -89,16 +89,16 @@ export class S3StorageAdapter {
     }
   }
 
-  async deleteImages(keys: string[]) {
-    const objectsToDelete = keys.map((key) => ({ Key: key }));
-
-    const bucketParams = {
-      Bucket: this.bucketName,
-      Delete: { Objects: objectsToDelete },
-      Quiet: false,
-    };
-    return await this.s3Client.send(new DeleteObjectsCommand(bucketParams));
-  }
+  // async deleteImages(keys: string[]) {
+  //   const objectsToDelete = keys.map((key) => ({ Key: key }));
+  //
+  //   const bucketParams = {
+  //     Bucket: this.bucketName,
+  //     Delete: { Objects: objectsToDelete },
+  //     Quiet: false,
+  //   };
+  //   return await this.s3Client.send(new DeleteObjectsCommand(bucketParams));
+  // }
 
   getUrlFile(url: string) {
     return `https://funny-team.s3.eu-north-1.amazonaws.com/${url}`;

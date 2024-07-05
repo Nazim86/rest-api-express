@@ -1,12 +1,11 @@
 import express from "express";
 import cors from 'cors';
 import {AppDataSource} from "./db/db";
-import {userRoutes} from "./routes/user-routes";
-import {authRoutes} from "./feature/auth/route/auth-routes";
+import {authRoutes} from "./feature/auth/route/auth.routes";
 
 
 import cookieParser from 'cookie-parser';
-import {fileRoutes} from "./feature/file/route/file-routes";
+import {fileRoutes} from "./feature/auth/file/route/file.routes";
 
 
 
@@ -18,10 +17,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-const port = process.env.PORT || 5000
-
-
-app.use("/user", userRoutes)
 app.use("/auth", authRoutes)
 app.use("/file", fileRoutes)
 app.set('trust proxy', true)

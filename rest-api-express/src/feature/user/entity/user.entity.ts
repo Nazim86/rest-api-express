@@ -1,7 +1,5 @@
 import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm"
-import {File} from "../../file/entity/file.entity";
-
-
+import {File} from "../../auth/file/entity/file.entity";
 
 @Entity()
 export class User {

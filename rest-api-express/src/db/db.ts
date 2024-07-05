@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'
 import {DataSource} from "typeorm";
 import {User} from "../feature/user/entity/user.entity";
 import {Device} from "../feature/device/entity/device.entity";
-import {File} from "../feature/file/entity/file.entity";
+import {File} from "../feature/auth/file/entity/file.entity";
 
 
 dotenv.config()

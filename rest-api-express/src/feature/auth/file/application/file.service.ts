@@ -1,8 +1,8 @@
 import {injectable} from "inversify";
-import {S3StorageAdapter} from "../s3-storage-adapter.service";
+import {S3StorageAdapter} from "../../../amazonS3/s3-storage-adapter.service";
 import {File} from "../entity/file.entity";
 import {FileRepository} from "../db/file.repository";
-import {ResultCode} from "../../../error-handler/result-code-enum";
+import {ResultCode} from "../../../../error-handler/result-code-enum";
 
 @injectable()
 export class FileService {
@@ -38,21 +38,18 @@ export class FileService {
         return await this.fileRepository.getFile(id)
     }
 
-    async downloadFile(file){
-        return await this.s3Service.downloadFile(file)
+    async downloadFile(fileKey:string){
+        return await this.s3Service.downloadFile(fileKey)
     }
 
-    // async deleteFile(id: number) {
-    //     const file = await this.fileRepository.findOneBy({id});
-    //     if (file) {
-    //         await this.fileRepository.remove(file);
-    //         await s3.deleteObject({
-    //             Bucket: 'your-bucket-name',
-    //             Key: file.name,
-    //         }).promise();
-    //     }
-    // }
-    //
+    async deleteFile(key: string) {
+
+        await this.s3Service.deleteFile(key)
+
+        return this.fileRepository.deleteFile(key)
+    }
+
+
     async updateFile(id:string,userId: string, fileData) {
 
         const uploadedFile = await this.s3Service.uploadFile(userId, fileData)

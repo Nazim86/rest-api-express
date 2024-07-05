@@ -1,14 +1,14 @@
 import { Router} from "express";
-import {authValidations} from "../../../validations/auth-validations";
+import {authValidations} from "../../../validations/auth.validations";
 import {
     userInputValidations
-} from "../../../validations/user-validations";
+} from "../../../validations/user.validations";
 
-import {checkRefreshTokenMiddleware} from "../../../middlewares/check-refreshToken-middleware";
+import {checkRefreshTokenMiddleware} from "../../../middlewares/check-refreshToken.middleware";
 import {container} from "../../../composition-root";
 import {AuthController} from "../api/auth.controller";
-import {checkAccessTokenMiddleware} from "../../../middlewares/check-accessToken-middleware";
-import {inputValidationErrorsMiddleware} from "../../../middlewares/input-validation-errors-middleware";
+import {checkAccessTokenMiddleware} from "../../../middlewares/check-accessToken.middleware";
+import {inputValidationErrorsMiddleware} from "../../../middlewares/input-validation-errors.middleware";
 
 
 export const authRoutes = Router({});
@@ -30,15 +30,6 @@ authRoutes.get('/logout', checkAccessTokenMiddleware,
 
 authRoutes.get('/info', checkAccessTokenMiddleware,
     authController.userInfo.bind(authController));
-
-
-
-// authRoutes.get('/me', checkRefreshTokenMiddleware, authController.getCurrentUser.bind(authController))
-
-
-//
-// authRoutes.post('/logout', checkRefreshTokenMiddleware,
-//     authController.logout.bind(authController));
 
 
 

@@ -2,8 +2,6 @@ import express from "express";
 import cors from 'cors';
 import {AppDataSource} from "./db/db";
 import {authRoutes} from "./feature/auth/route/auth.routes";
-
-
 import cookieParser from 'cookie-parser';
 import {fileRoutes} from "./feature/auth/file/route/file.routes";
 

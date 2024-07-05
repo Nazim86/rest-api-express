@@ -7,6 +7,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { injectable } from "inversify";
 
+
 @injectable()
 export class S3StorageAdapter {
 
@@ -30,7 +31,7 @@ export class S3StorageAdapter {
     });
   }
 
-  async uploadFile(userId, filedata): Promise<{ key: string; url: string; fileId: string | undefined }> {
+  async uploadFile(userId:string, filedata:any): Promise<{ key: string; url: string; fileId: string | undefined }> {
     const fileType = filedata.mimetype.split('/')[0]
     const format = filedata.mimetype.split('/')[1]
     const key = `content/${userId}/${fileType}/${uuidv4()}.${format}`;
@@ -68,11 +69,6 @@ export class S3StorageAdapter {
       const { Body, ContentType, ContentLength } = await this.s3Client.send(command);
 
       return {Body, ContentType,ContentLength}
-      // return {
-      //
-      //   url: this.getUrlFile(key),
-      //   fileId: uploadResult.$metadata.requestId,
-      // };
     } catch (exception) {
       console.log("exception",exception)
       throw exception;
@@ -88,17 +84,6 @@ export class S3StorageAdapter {
       throw exception;
     }
   }
-
-  // async deleteImages(keys: string[]) {
-  //   const objectsToDelete = keys.map((key) => ({ Key: key }));
-  //
-  //   const bucketParams = {
-  //     Bucket: this.bucketName,
-  //     Delete: { Objects: objectsToDelete },
-  //     Quiet: false,
-  //   };
-  //   return await this.s3Client.send(new DeleteObjectsCommand(bucketParams));
-  // }
 
   getUrlFile(url: string) {
     return `https://funny-team.s3.eu-north-1.amazonaws.com/${url}`;

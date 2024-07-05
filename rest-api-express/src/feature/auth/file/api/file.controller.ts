@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { injectable } from "inversify";
 import {FileService} from "../application/file.service";
 import {Readable} from "node:stream";
+import {HttpStatus} from "@nestjs/common";
 
 @injectable()
 export class FileController {
@@ -87,7 +88,7 @@ export class FileController {
             throw new Error('Неожиданный тип тела ответа');
         }
 
-        return
+        return res.status(HttpStatus.OK)
     }
 }
 

@@ -16,16 +16,13 @@ export const AppDataSource = new DataSource({
     port: 3306,
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: 'erp',
+    database: process.env.DB_NAME,
     synchronize: true,
-    logging: false,
     entities: [
         User,
         Device,
         File,
     ],
-    migrations: [],
-    subscribers: [],
     driver: require('mysql2')
 });
 

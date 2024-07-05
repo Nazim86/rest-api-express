@@ -2,11 +2,10 @@ import {injectable} from "inversify";
 import {User} from "../entity/user.entity";
 import {Repository} from "typeorm";
 import {AppDataSource} from "../../../db/db";
-import {Inject} from "@nestjs/common";
 
 @injectable()
 export class UserRepository {
-    @Inject(User) private userRepo: Repository<User>;
+     private userRepo: Repository<User>;
 
     constructor() {
         this.userRepo = AppDataSource.getRepository(User);

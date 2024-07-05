@@ -9,6 +9,6 @@ export const handleErrorResult = (response: Response, code: ResultCode) => {
             return response.sendStatus(403)
         //..
         default:
-            return
+            return response.sendStatus(500)
     }
 }

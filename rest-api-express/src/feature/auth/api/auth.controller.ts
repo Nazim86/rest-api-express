@@ -5,6 +5,7 @@ import {UserService} from "../../user/application/user-service";
 import {HttpStatus} from "@nestjs/common";
 import {DeviceService} from "../../device/application/device.service";
 import {ResultCode} from "../../../error-handler/result-code-enum";
+import {body} from "express-validator";
 
 @injectable()
 export class AuthController {
@@ -28,8 +29,8 @@ export class AuthController {
         const {id, password} = req.body;
         const user = await this.authService.validateUser(id, password);
         if (!user) {
-            res.status(401).json({message: "Invalid credentials"});
-            return;
+            return res.status(401).json({message: "Invalid credentials"});
+
         }
 
         const deviceName = req.headers['user-agent'];
@@ -91,5 +92,16 @@ export class AuthController {
         } catch (e) {
             return res.sendStatus(401)
         }
+    }
+
+    validateCreateUser() {
+        return [
+            body('email').custom(async (value) => {
+                const user = await this.userService.findUserById(value);
+                if (user) {
+                    throw new Error('E-mail already in use');
+                }
+            })
+        ];
     }
 }
